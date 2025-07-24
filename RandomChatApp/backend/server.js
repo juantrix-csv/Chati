@@ -2,13 +2,20 @@ const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
 const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 // SQLite database for storing messages
-const db = new sqlite3.Database('./chat.db');
+const defaultDb = path.join(__dirname, 'chat.db');
+let dbPath = process.env.DB_FILE || defaultDb;
+if (fs.existsSync(dbPath) && fs.lstatSync(dbPath).isDirectory()) {
+  dbPath = path.join(dbPath, 'chat.db');
+}
+const db = new sqlite3.Database(dbPath);
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

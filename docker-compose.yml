@@ -5,7 +5,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./RandomChatApp/backend/chat.db:/app/chat.db
+      - ./RandomChatApp/backend/db:/db
+    environment:
+      - DB_FILE=/db/chat.db
   frontend:
     build: ./RandomChatApp/frontend
     ports:
